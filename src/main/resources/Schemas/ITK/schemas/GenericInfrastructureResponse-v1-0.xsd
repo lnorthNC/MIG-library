@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:itk="urn:nhs-itk:ns:201005" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:nhs-itk:ns:201005" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="InfrastructureResponse" type="itk:InfrastructureResponseType"/>
+	<xs:complexType name="InfrastructureResponseType">
+		<xs:sequence>
+			<xs:element name="reportingIdentity" type="itk:auditIdentityType"/>
+			<xs:element name="errors" type="itk:errorListType"/>
+			<!-- Extension point -->
+			<xs:any processContents="lax" minOccurs="0"/>
+		</xs:sequence>
+		<!--
+			Quick result type
+		-->
+		<xs:attribute name="result" type="itk:InfrastructureResponseCode" use="required"/>
+		<!--
+			Time the ACK/NACK was generated
+		-->
+		<xs:attribute name="timestamp" type="xs:dateTime"/>
+		<!--
+			Infrastructure responses are returned for the complete distribution envelope and contents only,
+			so only the tracking id (not individual payload ids) are referenced here.
+		-->
+		<xs:attribute name="trackingIdRef" type="itk:uuid" use="required"/>
+		<!--
+			Quote the original service name
+		-->
+		<xs:attribute name="serviceRef" type="xs:anyURI" use="required"/>
+	</xs:complexType>
+	<!-- 
+		Error list, just a set of ToolkitErrorInfoStruct
+	-->
+	<xs:complexType name="errorListType">
+		<xs:sequence>
+			<xs:element name="errorInfo" type="itk:ToolkitErrorInfoStruct" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="InfrastructureResponseCode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="OK"/>
+			<xs:enumeration value="Failure"/>
+			<xs:enumeration value="Warning"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="uuid">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!--
+		Copy of the auditIdentity data from the distribution envelope, included inline for discussion. Include
+		be reference for production
+	-->
+	<xs:complexType name="auditIdentityType">
+		<xs:sequence>
+			<xs:element name="id" type="itk:identityType" maxOccurs="4"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="identityType">
+		<xs:attribute name="type" type="xs:string" use="optional" default="2.16.840.1.113883.2.1.3.2.4.18.22"/>
+		<xs:attribute name="uri" type="xs:anyURI" use="required"/>
+	</xs:complexType>
+	<!--
+		This is a copy of the ITK ToolkitErrorInfoStruct from the ITKDatatypes-2010-05.xsd schema file, it is copied here
+		for convenience during review. In production it will be included by reference.
+	-->
+	<xs:complexType name="ToolkitErrorInfoStruct">
+		<xs:sequence>
+			<xs:element name="ErrorID" type="xs:anyURI"/>
+			<xs:element name="ErrorCode">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="codeSystem" type="xs:string" default="2.16.840.1.113883.2.1.3.2.4.17.268"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ErrorText" type="xs:string"/>
+			<xs:element name="ErrorDiagnosticText" type="xs:string" minOccurs="0"/>
+			<xs:any namespace="##local" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="MiG"
+    targetNamespace="http://www.healthcaregateway.co.uk/mig"
+    xmlns:mig="http://www.healthcaregateway.co.uk/mig"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+
+    <types>
+        <schema name="RequestSpace" xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.healthcaregateway.co.uk/mig" schemaLocation="MIG.Standard.Request.v1-0.xsd"/>
+        </schema>
+        <schema  xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.healthcaregateway.co.uk/mig" schemaLocation="MIG.Standard.Response.v1-0.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.healthcaregateway.co.uk/mig" schemaLocation="MIG.Standard.Fault.v1-0.xsd"/>
+        </schema>
+    </types>
+    <message name="MiGRequestMessage">
+        <part name="request" element="mig:migRequest"/>
+    </message>
+    <message name="MiGResponseMessage">
+        <part name="response" element="mig:migResponse"/>
+    </message>
+    <message name="MiGFaultMessage">
+        <part name="fault" element="mig:migFault"/>
+    </message>
+    <portType name="MiG">
+        <operation name="MiG">
+            <input message="mig:MiGRequestMessage"/>
+            <output message="mig:MiGResponseMessage"/>
+            <fault name="MiGFault" message="mig:MiGFaultMessage"/>
+        </operation>
+    </portType>
+    <binding name="MiGBinding" type="mig:MiG">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="MiG">
+            <soap:operation soapAction="MiG" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="MiGFault">
+                <soap:fault name="MiGFault" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="MiG">
+        <port name="MiG" binding="mig:MiGBinding">
+            <soap:address location="http://localhost/MiG"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="MiG">
+        <plnk:role name="MiGProvider">
+            <plnk:portType name="mig:MiG"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 sp1 (x64) (http://www.altova.com) by Stuart Dunning (Healthcare Gateway Ltd) -->
+<!-- Copyright 2010 Healthcare Gateway All Rights Reserved. No part of this 
+	document may be photocopied, reproduced, stored in a retrieval system or 
+	transmitted in any form or by any means, whether electronic, mechanical, 
+	or otherwise, without the prior written permission of Healthcare Gateway. 
+	No warranty of accuracy is given concerning the contents of the information 
+	contained in this publication. To the extent permitted by law, no liability 
+	(including liability to any person by reason of negligence) will be accepted 
+	by Healthcare Gateway, its subsidiaries or employees for any direct or indirect 
+	loss or damage caused by omissions from or inaccuracies in this document. 
+	Healthcare Gateway reserves the right to change without notice the contents 
+	of this publication and the software to which it relates. Product and company 
+	names herein may be the trademarks of their respective owners. Healthcare 
+	Gateway Ltd. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.healthcaregateway.co.uk/mig" targetNamespace="http://www.healthcaregateway.co.uk/mig" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:include schemaLocation="../Vocabulary/MIG.Vocabulary.xsd"/>
+	<xs:simpleType name="dt.uid">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="dt.mimeType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="[a-zA-Z\-]+/[a-zA-Z\-\.0-9_]+(\+[a-zA-Z\-\.0-9_]+)?"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="dt.id">
+		<xs:restriction base="xs:token"/>
+	</xs:simpleType>
+	<xs:simpleType name="dt.bool">
+		<xs:restriction base="xs:boolean">
+			<xs:pattern value="true|false"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="dt.Date">
+		<xs:annotation>
+			<xs:documentation>Represents a calendar date (ISO 8601) e.g.
+				1999-10-26 represents the calendar date 1999-10-26.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	<xs:simpleType name="dt.DateTime">
+		<xs:annotation>
+			<xs:documentation>Represents a specific instant of time (ISO 8601)
+				e.g. to indicate 1:20 pm on May the 31st, 1999 write:
+				1999-05-31T13:20:00. The number of seconds can include decimal
+				digits to arbitrary precision.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:dateTime"/>
+	</xs:simpleType>
+	<xs:complexType name="dt.DatePart">
+		<xs:annotation>
+			<xs:documentation>Represents a specific instant of time (ISO 8601).
+				Combinations of date and time of day values are defined by the
+				datepart property.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="datepart" type="voc.DatePart" use="required"/>
+		<xs:attribute name="value" type="dt.DateTime" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="dt.Duration">
+		<xs:annotation>
+			<xs:documentation>Represents a duration of time.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="unit" type="voc.TimeUnit" use="required"/>
+		<xs:attribute name="value" type="xs:int" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="dt.TimeRange">
+		<xs:choice minOccurs="0">
+			<xs:element name="baseLow">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="low" type="dt.DatePart">
+							<xs:annotation>
+								<xs:documentation>The low limit of the interval.
+								</xs:documentation>
+								<xs:appinfo/>
+							</xs:annotation>
+						</xs:element>
+						<xs:choice minOccurs="0">
+							<xs:element name="width" type="dt.Duration" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The time difference between high and low
+										boundary. In any interval representation only two of the three
+										properties high, low, and width need to be stated and the
+										third can be derived.</xs:documentation>
+									<xs:appinfo/>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="high" type="dt.DatePart" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The high limit of the interval.
+									</xs:documentation>
+									<xs:appinfo/>
+								</xs:annotation>
+							</xs:element>
+						</xs:choice>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="baseHigh">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="high" type="dt.DatePart">
+							<xs:annotation>
+								<xs:documentation>The high limit of the interval.
+								</xs:documentation>
+								<xs:appinfo/>
+							</xs:annotation>
+						</xs:element>
+						<xs:choice minOccurs="0">
+							<xs:element name="width" type="dt.Duration" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The time difference between high and low
+										boundary. In any interval representation only two of the three
+										properties high, low, and width need to be stated and the
+										third can be derived.</xs:documentation>
+									<xs:appinfo/>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="low" type="dt.DatePart" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The low limit of the interval.
+									</xs:documentation>
+									<xs:appinfo/>
+								</xs:annotation>
+							</xs:element>
+						</xs:choice>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="dt.Code">
+		<xs:attribute name="codeSystem" type="voc.CodeSystem" use="required"/>
+		<xs:attribute name="displayName" type="xs:string" use="required"/>
+		<xs:attribute name="code" type="xs:token"/>
+	</xs:complexType>
+	<xs:complexType name="dt.openCode">
+		<xs:attribute name="codeSystem" type="xs:string" use="required"/>
+		<xs:attribute name="displayName" type="xs:string" use="required"/>
+		<xs:attribute name="code" type="xs:token"/>
+	</xs:complexType>	
+	<xs:complexType name="dt.CodeQualified">
+		<xs:complexContent>
+			<xs:extension base="dt.Code">
+				<xs:sequence>
+					<xs:element name="qualifier" type="dt.Qualifier" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="translation" type="dt.CodeQualified" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="dt.Qualifier">
+		<xs:sequence>
+			<xs:element name="name" type="dt.Code"/>
+			<xs:element name="value" type="dt.Code"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="dt.Version">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="(\d+)\.(\d+)\.(\d+)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="dt.url">
+		<xs:restriction base="xs:anyURI"/>
+	</xs:simpleType>
+	<xs:simpleType name="dt.HexColour">
+		<xs:annotation>
+			<xs:documentation>Hex Colour e.g. #FFFFFF</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:length value="7"/>
+			<xs:pattern value="^#[0-9a-fA-F]{6}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="dt.PostCode">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="8"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="dt.Age">
+		<xs:annotation>
+			<xs:documentation>Represents a duration of time.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="unit" type="voc.AgeUnit" use="required"/>
+		<xs:attribute name="value" type="xs:short" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="dt.AgeRange">
+		<xs:sequence>
+			<xs:element name="low" type="dt.Age"/>
+			<xs:element name="high" type="dt.Age"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="dt.DurationRange">
+		<xs:sequence>
+			<xs:element name="minimum" type="dt.Duration" minOccurs="0"/>
+			<xs:element name="maximum" type="dt.Duration" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="dt.TopNFilter">
+		<xs:sequence>
+			<xs:element name="Value" type="xs:integer"/>
+			<xs:element name="Order" type="voc.SortOrder"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="dt.Speciality">
+		<xs:attribute name="specialityName" type="xs:string" use="required"/>
+		<xs:attribute name="specialityCode" type="xs:string"/>
+	</xs:complexType>
+</xs:schema>

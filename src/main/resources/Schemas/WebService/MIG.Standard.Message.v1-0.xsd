@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 (http://www.altova.com) by Robert Cormack (Healthcare Gateway Ltd) -->
+<!-- Copyright 2010 Healthcare Gateway All Rights Reserved. No part of this 
+	document may be photocopied, reproduced, stored in a retrieval system or 
+	transmitted in any form or by any means, whether electronic, mechanical, 
+	or otherwise, without the prior written permission of Healthcare Gateway. 
+	No warranty of accuracy is given concerning the contents of the information 
+	contained in this publication. To the extent permitted by law, no liability 
+	(including liability to any person by reason of negligence) will be accepted 
+	by Healthcare Gateway, its subsidiaries or employees for any direct or indirect 
+	loss or damage caused by omissions from or inaccuracies in this document. 
+	Healthcare Gateway reserves the right to change without notice the contents 
+	of this publication and the software to which it relates. Product and company 
+	names herein may be the trademarks of their respective owners. Healthcare 
+	Gateway Ltd. -->
+<xs:schema xmlns="http://www.healthcaregateway.co.uk/mig" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.healthcaregateway.co.uk/mig" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../Core/MIG.Core.Clinical.v1-0.xsd"/>
+	<xs:complexType name="Header" mixed="true">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Payload" mixed="true">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Message">
+		<xs:sequence>
+			<xs:element name="serviceDefinition" type="Core.ServiceDefinition"/>
+			<xs:element name="serviceHeader" type="Header" minOccurs="0"/>
+			<xs:element name="serviceContent" type="Payload"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

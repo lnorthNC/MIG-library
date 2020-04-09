@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 sp1 (x64) (http://www.altova.com) by Mike Smith (Healthcare Gateway Ltd) -->
+<!-- Copyright 2010 Healthcare Gateway All Rights Reserved. No part of this 
+	document may be photocopied, reproduced, stored in a retrieval system or 
+	transmitted in any form or by any means, whether electronic, mechanical, 
+	or otherwise, without the prior written permission of Healthcare Gateway. 
+	No warranty of accuracy is given concerning the contents of the information 
+	contained in this publication. To the extent permitted by law, no liability 
+	(including liability to any person by reason of negligence) will be accepted 
+	by Healthcare Gateway, its subsidiaries or employees for any direct or indirect 
+	loss or damage caused by omissions from or inaccuracies in this document. 
+	Healthcare Gateway reserves the right to change without notice the contents 
+	of this publication and the software to which it relates. Product and company 
+	names herein may be the trademarks of their respective owners. Healthcare 
+	Gateway Ltd. -->
+<xs:schema xmlns="http://www.healthcaregateway.co.uk/mig" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.healthcaregateway.co.uk/mig" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:include schemaLocation="../DataTypes/MIG.DataTypes.xsd"/>
+	<xs:include schemaLocation="../Core/MIG.Core.Clinical.v1-0.xsd"/>
+	<xs:element name="sendDocument">
+		<xs:annotation>
+			<xs:documentation>used to send structured or unstructured documents
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="id" type="dt.uid">
+					<xs:annotation>
+						<xs:documentation>Unique message identifier</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="provenance" type="Core.Provenance">
+					<xs:annotation>
+						<xs:documentation>Message origin</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="patient" type="SendDocument.Patient"/>
+				<xs:element name="document" type="Core.Document">
+					<xs:annotation>
+						<xs:documentation>the document and associated meta data for the
+							document</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="schemaVersion" type="dt.Version" use="optional" default="1.0.0"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="SendDocument.Patient">
+		<xs:sequence>
+			<xs:element name="primaryIdentifier">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="dt.id">
+							<xs:attribute name="type" type="voc.PatientIdentifier"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="name" type="Core.PersonName" minOccurs="0"/>
+			<xs:element name="birthDate" type="dt.Date"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2010 Healthcare Gateway All Rights Reserved. No part of this 
+	document may be photocopied, reproduced, stored in a retrieval system or 
+	transmitted in any form or by any means, whether electronic, mechanical, 
+	or otherwise, without the prior written permission of Healthcare Gateway. 
+	No warranty of accuracy is given concerning the contents of the information 
+	contained in this publication. To the extent permitted by law, no liability 
+	(including liability to any person by reason of negligence) will be accepted 
+	by Healthcare Gateway, its subsidiaries or employees for any direct or indirect 
+	loss or damage caused by omissions from or inaccuracies in this document. 
+	Healthcare Gateway reserves the right to change without notice the contents 
+	of this publication and the software to which it relates. Product and company 
+	names herein may be the trademarks of their respective owners. Healthcare 
+	Gateway Ltd. -->
+<xs:schema targetNamespace="http://www.healthcaregateway.co.uk/mig"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.healthcaregateway.co.uk/mig"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.0">
+	<xs:include schemaLocation="../Vocabulary/MIG.Vocabulary.xsd" />
+	<xs:include schemaLocation="../DataTypes/MIG.DataTypes.xsd" />
+	<xs:include schemaLocation="MIG.Core.v1-0.xsd" />
+	<xs:simpleType name="Core.Clinical.EventRef">
+		<xs:restriction base="dt.uid" />
+	</xs:simpleType>
+	<xs:complexType name="Core.Clinical.Encounter">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid" />
+			<xs:element name="effectiveTime" type="dt.DatePart" />
+			<xs:element name="recordedTime" type="dt.DateTime" />
+			<xs:element name="author" type="Core.UserRole" />
+			<xs:element name="responsiblePerson"
+				type="Core.Clinical.EncounterResponsiblePerson" />
+			<xs:element name="organisation" type="Core.Organisation" />
+			<xs:element name="consultationType" type="dt.Code"
+				minOccurs="0" />
+			<xs:element name="clinicalPurpose" type="dt.Code"
+				minOccurs="0" />
+			<xs:element name="duration" type="dt.Duration" minOccurs="0" />
+			<xs:element name="accompanyingHCP" type="Core.UserRole"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="travelTime" type="dt.Duration"
+				minOccurs="0" />
+			<xs:element name="travelDistance" type="xs:nonNegativeInteger"
+				minOccurs="0" />
+			<xs:element name="component" type="Core.Clinical.EncounterComponent"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="complete" type="dt.bool" use="optional"
+			default="true" />
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.EncounterResponsiblePerson">
+		<xs:choice>
+			<xs:element name="internalToSource">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="person" type="Core.UserRole" />
+						<xs:element name="location" type="Core.Location" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="externalToSource">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="person" type="Core.PersonName" />
+						<xs:element name="organisation" type="Core.Organisation" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.EncounterComponent">
+		<xs:sequence>
+			<xs:element name="event" type="Core.Clinical.EventRef" />
+			<xs:element name="problemPage" type="xs:nonNegativeInteger"
+				minOccurs="0" />
+			<xs:element name="heading" type="dt.Code" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Event" abstract="true">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid" />
+			<xs:element name="effectiveTime" type="dt.DatePart" />
+			<xs:element name="recordedTime" type="dt.DateTime" />
+			<xs:element name="author" type="Core.UserRole" />
+			<xs:element name="responsiblePerson" type="Core.UserRole" />
+			<xs:element name="organisation" type="Core.Organisation" />
+			<xs:element name="code" type="dt.CodeQualified" minOccurs="0" />
+			<xs:element name="originalTerm" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="associatedText" type="Core.Clinical.AssociatedText"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.AssociatedText">
+		<xs:sequence>
+			<xs:element name="value" type="xs:string" />
+		</xs:sequence>
+		<xs:attribute name="use" type="voc.AssociatedText" use="required" />
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Observation">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event">
+				<xs:sequence>
+					<xs:element name="value" type="Core.Clinical.ObservationValue"
+						minOccurs="0" />
+					<xs:element name="abnormal" type="Core.Clinical.Abnormal"
+						minOccurs="0" />
+					<xs:element name="complexObservation" type="Core.Clinical.ComplexObservation"
+						minOccurs="0" />
+				</xs:sequence>
+				<xs:attribute name="uncoded" type="dt.bool" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.ObservationValue">
+		<xs:sequence>
+			<xs:element name="availableRange" type="Core.Clinical.Range"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:choice>
+				<xs:element name="numeric" type="Core.Clinical.NumericValue" />
+				<xs:element name="text" type="Core.Clinical.TextValue" />
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.NumericValue">
+		<xs:sequence>
+			<xs:element name="operator" type="xs:string" minOccurs="0" />
+			<xs:element name="value" type="xs:decimal" />
+			<xs:element name="units" type="xs:string" minOccurs="0" />
+			<xs:element name="ucumUnits" type="xs:string" minOccurs="0" />
+			<xs:element name="range" type="Core.Clinical.Range"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.TextValue">
+		<xs:sequence>
+			<xs:element name="value" type="xs:string" />
+			<xs:element name="range" type="Core.Clinical.Range"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Range">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="description" type="xs:string" />
+				<xs:element name="numericRange" type="Core.Clinical.NumericRange" />
+				<xs:element name="textRange" type="Core.Clinical.TextRange" />
+			</xs:choice>
+			<xs:element name="units" type="xs:string" minOccurs="0" />
+			<xs:element name="sex" type="voc.Gender" minOccurs="0" />
+			<xs:element name="ageRange" type="dt.AgeRange" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="qualifier" type="voc.RangeQualifier" />
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.NumericRange">
+		<xs:sequence>
+			<xs:element name="low" type="Core.Clinical.RangeValue"
+				minOccurs="0" />
+			<xs:element name="high" type="Core.Clinical.RangeValue"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.RangeValue">
+		<xs:attribute name="value" type="xs:decimal" use="required" />
+		<xs:attribute name="operator" type="xs:string" use="optional" />
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.TextRange">
+		<xs:sequence>
+			<xs:element name="low" type="xs:string" minOccurs="0" />
+			<xs:element name="high" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Abnormal">
+		<xs:attribute name="value" type="dt.bool" use="required" />
+		<xs:attribute name="description" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.ComplexObservation">
+		<xs:sequence>
+			<xs:element name="parentLink" type="Core.Clinical.EventRef"
+				minOccurs="0" />
+			<xs:element name="childLink" type="Core.Clinical.EventRef"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Problem">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event">
+				<xs:sequence>
+					<xs:element name="status" type="voc.ProblemStatus" />
+					<xs:element name="significance" type="voc.ProblemSignificance" />
+					<xs:element name="firstEpisode" type="dt.bool" />
+					<xs:element name="expectedDuration" type="dt.Duration"
+						minOccurs="0" />
+					<xs:element name="endTime" type="dt.DatePart" minOccurs="0" />
+					<xs:element name="hierarchy" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="parentProblem" type="Core.Clinical.ProblemRelationship"
+									minOccurs="0" maxOccurs="unbounded" />
+								<xs:element name="childProblem" type="Core.Clinical.ProblemRelationship"
+									minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="episodeEvent" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="Core.Clinical.EventRef">
+									<xs:attribute name="episodicity" type="voc.Episodicity"
+										use="required" />
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="linkedEvent" type="Core.Clinical.EventRef"
+						minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.ProblemRelationship">
+		<xs:simpleContent>
+			<xs:extension base="Core.Clinical.EventRef">
+				<xs:attribute name="relationship" type="voc.ProblemRelationship"
+					use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Allergy">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event">
+				<xs:sequence>
+					<xs:element name="targetDrug" type="dt.Code" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>If an allergy was originally recorded against a
+								specific preparation, the targetDrug element specifies that
+								preparation. E.g. an allergy to Penicillins may have a
+								targetDrug of Amoxicillin 250mg Tablets.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Diary">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event">
+				<xs:sequence>
+					<xs:element name="durationTerm" type="xs:string"
+						minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Referral">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event">
+				<xs:sequence>
+					<xs:element name="targetOrganisation" type="Core.Organisation"
+						minOccurs="0" />
+					<xs:element name="reason" type="xs:string" minOccurs="0" />
+					<xs:element name="urgency" type="voc.ReferralUrgency" />
+					<xs:element name="NHS" type="dt.bool" />
+					<xs:element name="transport" type="voc.ReferralTransport" />
+					<xs:element name="direction" type="voc.ReferralDirection" />
+					<xs:element name="sourceOrganisation" type="Core.Organisation"
+						minOccurs="0" />
+					<xs:element name="datedReferral" type="dt.Date"
+						minOccurs="0" />
+					<xs:element name="rejectedReason" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="referralMode" type="voc.ReferralMode" />
+					<xs:element name="UBRN" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>This identifier is unique within the eBooking
+								Service. It identifies the Unique Booking Reference Number
+								allocated to the service request.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="requestType" type="voc.ReferralRequestType" />
+					<xs:element name="status" type="voc.ReferralStatus" />
+					<xs:element name="dateEnded" type="dt.Date" minOccurs="0" />
+					<xs:element name="externalReference" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="referralActivity" type="Core.Clinical.EventRef"
+						minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Medication">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event">
+				<xs:sequence>
+					<xs:element name="reviewDate" type="dt.Date" minOccurs="0" />
+					<xs:element name="expiryDate" type="dt.Date" minOccurs="0" />
+					<xs:element name="localMixture" type="Core.Clinical.LocalMixture"
+						minOccurs="0" />
+					<xs:element name="dosage" type="xs:string" />
+					<xs:element name="quantity" type="xs:decimal" />
+					<xs:element name="quantityUnit" type="xs:string" />
+					<xs:element name="quantityRepresentation" type="xs:string"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Full textual representation of the quantity
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="durationOfIssue" type="xs:int" />
+					<xs:element name="prescriptionType" type="voc.PrescriptionType" />
+					<xs:element name="pharmacyText" minOccurs="0">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="255" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="patientText" minOccurs="0">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="255" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="drugStatus" type="voc.DrugStatus" />
+					<xs:element name="private" type="dt.bool" />
+					<xs:element name="minNextIssueDays" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="maxNextIssueDays" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="firstIssueDate" type="dt.Date"
+						minOccurs="0" />
+					<xs:element name="mostRecentIssueDate" type="dt.Date"
+						minOccurs="0" />
+					<xs:element name="numberOfIssues" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="authorisedIssues" type="Core.Clinical.AuthorisedIssue"
+						minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="averageCompliance" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="mostRecentIssueMethod" type="voc.DrugIssueType"
+						minOccurs="0" />
+					<xs:element name="prescribedAsContraceptive" type="dt.bool"
+						minOccurs="0" />
+					<xs:element name="cancellation" type="Core.Clinical.MedicationCancel"
+						minOccurs="0" />
+					<xs:element name="dmdUnitOfMeasure" type="xs:long"
+						minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.MedicationIssue">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event">
+				<xs:sequence>
+					<xs:element name="medication" type="Core.Clinical.EventRef"
+						minOccurs="0" />
+					<xs:element name="localMixture" type="Core.Clinical.LocalMixture"
+						minOccurs="0" />
+					<xs:element name="dosage" type="xs:string" />
+					<xs:element name="quantity" type="xs:decimal" />
+					<xs:element name="quantityUnit" type="xs:string" />
+					<xs:element name="quantityRepresentation" type="xs:string"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Full textual representation of the quantity
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="durationOfIssue" type="xs:int" />
+					<xs:element name="compliance" minOccurs="0">
+						<xs:simpleType>
+							<xs:restriction base="xs:short">
+								<xs:minInclusive value="0" />
+								<xs:maxInclusive value="100" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="prescriptionType" type="voc.PrescriptionType" />
+					<xs:element name="estimatedNHSCost" type="xs:decimal" />
+					<xs:element name="pharmacyStamp" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="issueMethod" type="voc.DrugIssueType" />
+					<xs:element name="pharmacyText" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="patientText" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="pharmacyMessage" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="patientMessage" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="private" type="dt.bool" />
+					<xs:element name="cancelled" type="dt.bool" />
+					<xs:element name="prescribedAsContraceptive" type="dt.bool"
+						minOccurs="0" />
+					<xs:element name="dmdUnitOfMeasure" type="xs:long"
+						minOccurs="0" />
+					<xs:element name="repeatDispensingInterval" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="repeatDispensingIssueCount" type="xs:int"
+						minOccurs="0" />
+					<xs:element name="batchNumber" type="xs:string"
+						minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.AuthorisedIssue">
+		<xs:sequence>
+			<xs:element name="authorisedDate" type="dt.Date" />
+			<xs:element name="responsiblePerson" type="Core.UserRole" />
+			<xs:element name="author" type="Core.UserRole" />
+			<xs:element name="authorisedIssues" type="xs:int" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.MedicationCancel">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid" />
+			<xs:element name="cancelledBy" type="Core.UserRole" />
+			<xs:element name="cancellationDateTime" type="dt.DateTime" />
+			<xs:element name="cancellationText" type="xs:string"
+				minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reason for cancellation</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="linkedEvent" type="Core.Clinical.EventRef"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.LocalMixture">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid" />
+			<xs:element name="name" type="xs:string" minOccurs="0" />
+			<xs:element name="constituent" type="Core.Clinical.LocalMixtureConstituent"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.LocalMixtureConstituent">
+		<xs:sequence>
+			<xs:element name="preparation" type="dt.Code" />
+			<xs:element name="strength" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Report">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event">
+				<xs:sequence>
+					<xs:element name="abnormal" type="dt.bool" />
+					<xs:element name="issueDate" type="dt.Date" />
+					<xs:element name="receivedDate" type="dt.DateTime" />
+					<xs:element name="dataType" type="voc.PathReportDataType" />
+					<xs:element name="reportLabId" type="xs:string" />
+					<xs:element name="requestLabId" type="xs:string" />
+					<xs:element name="requestDateTimeLab" type="dt.DateTime" />
+					<xs:element name="serviceOrganisation" type="Core.Organisation"
+						minOccurs="0" />
+					<xs:element name="serviceLocation" type="Core.Location"
+						minOccurs="0" />
+					<xs:element name="servicePerson" type="Core.PersonName"
+						minOccurs="0" />
+					<xs:element name="messageId" type="xs:int" />
+					<xs:element name="messageInterchange" type="Core.Clinical.MessageInterchange"
+						minOccurs="0" />
+					<xs:element name="orderHeader" type="Core.Clinical.EventRef"
+						minOccurs="0" />
+					<xs:element name="reportSummary" type="xs:string"
+						minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="component" type="Core.Clinical.ReportComponent"
+						minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.ReportComponent">
+		<xs:choice>
+			<xs:element name="specimen" type="Core.Clinical.Specimen" />
+			<xs:element name="battery" type="Core.Clinical.EventRef" />
+			<xs:element name="test" type="Core.Clinical.EventRef" />
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.MessageInterchange">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid" />
+			<xs:element name="senderEDICode" type="xs:string" />
+			<xs:element name="receiverEDICode" type="xs:string" />
+			<xs:element name="interchange" type="xs:string" />
+			<xs:element name="messageType" type="voc.PathMessageType" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Specimen">
+		<xs:sequence>
+			<xs:element name="labSpecimenReference" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="specimenType" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="fastingStatus" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="volume" type="xs:decimal" minOccurs="0" />
+			<xs:element name="volumeUnits" type="xs:string" minOccurs="0" />
+			<xs:element name="collectionProcedure" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="anatomicalOrigin" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="sampleDateTime" type="dt.DateTime"
+				minOccurs="0" />
+			<xs:element name="collectionStartDate" type="dt.DateTime"
+				minOccurs="0" />
+			<xs:element name="collectionEndDate" type="dt.DateTime"
+				minOccurs="0" />
+			<xs:element name="dateTimeReceivedByLab" type="dt.DateTime"
+				minOccurs="0" />
+			<xs:element name="comment" type="xs:string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xs:element name="battery" type="Core.Clinical.EventRef"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="test" type="Core.Clinical.EventRef"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.OrderHeader">
+		<xs:sequence>
+			<xs:element name="status" type="xs:string" minOccurs="0" />
+			<xs:element name="copyTo" type="xs:string" minOccurs="0" />
+			<xs:element name="priority" type="voc.OrderPriority"
+				minOccurs="0" />
+			<xs:element name="fasted" type="dt.bool" minOccurs="0" />
+			<xs:element name="innoculationRisk" type="dt.bool"
+				minOccurs="0" />
+			<xs:element name="lastMenstrualPeriod" type="dt.Date"
+				minOccurs="0" />
+			<xs:element name="pregnant" type="dt.bool" minOccurs="0" />
+			<xs:element name="orderBatch" type="Core.Clinical.OrderBatch"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.OrderBatch">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid" />
+			<xs:element name="orderTracker" type="dt.uid" minOccurs="0" />
+			<xs:element name="orderReference" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="category" type="xs:string" minOccurs="0" />
+			<xs:element name="status" type="xs:string" minOccurs="0" />
+			<xs:element name="lastStatusDate" type="dt.Date"
+				minOccurs="0" />
+			<xs:element name="requestSample" type="Core.Clinical.RequestSample"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="testOrder" type="Core.Clinical.TestOrder"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.TestOrder">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid" />
+			<xs:element name="description" type="xs:string" />
+			<xs:element name="code" type="dt.Code" />
+			<xs:element name="status" type="xs:string" />
+			<xs:element name="lastStatusDate" type="dt.Date" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.RequestSample">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid" />
+			<xs:element name="carrier" type="xs:string" minOccurs="0" />
+			<xs:element name="carrierColour" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="description" type="xs:string" minOccurs="0" />
+			<xs:element name="code" type="dt.Code" minOccurs="0" />
+			<xs:element name="completionDate" type="dt.DateTime"
+				minOccurs="0" />
+			<xs:element name="volumeValue" type="xs:decimal"
+				minOccurs="0" />
+			<xs:element name="volumeUnits" type="xs:string" minOccurs="0" />
+			<xs:element name="risk" type="xs:string" minOccurs="0" />
+			<xs:element name="testOrder" type="Core.Clinical.TestOrder"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Immunisation">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event">
+				<xs:sequence>
+					<xs:element name="manufacturer" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="expiryDate" type="dt.Date" minOccurs="0" />
+					<xs:element name="batchNumber" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="injectionSite" type="dt.Code"
+						minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Investigation">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event" />
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Clinical.Document">
+		<xs:complexContent>
+			<xs:extension base="Core.Clinical.Event" />
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

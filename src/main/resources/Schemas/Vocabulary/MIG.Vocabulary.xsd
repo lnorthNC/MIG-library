@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2010 Healthcare Gateway All Rights Reserved. No part of this 
+	document may be photocopied, reproduced, stored in a retrieval system or 
+	transmitted in any form or by any means, whether electronic, mechanical, 
+	or otherwise, without the prior written permission of Healthcare Gateway. 
+	No warranty of accuracy is given concerning the contents of the information 
+	contained in this publication. To the extent permitted by law, no liability 
+	(including liability to any person by reason of negligence) will be accepted 
+	by Healthcare Gateway, its subsidiaries or employees for any direct or indirect 
+	loss or damage caused by omissions from or inaccuracies in this document. 
+	Healthcare Gateway reserves the right to change without notice the contents 
+	of this publication and the software to which it relates. Product and company 
+	names herein may be the trademarks of their respective owners. Healthcare 
+	Gateway Ltd. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.healthcaregateway.co.uk/mig" targetNamespace="http://www.healthcaregateway.co.uk/mig" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:simpleType name="voc.AddressType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Structured"/>
+			<xs:enumeration value="Unstructured"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ConsentType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Given"/>
+			<xs:enumeration value="Refused"/>
+			<xs:enumeration value="Emergency"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.TimeUnit">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Year"/>
+			<xs:enumeration value="Month"/>
+			<xs:enumeration value="Week"/>
+			<xs:enumeration value="Day"/>
+			<xs:enumeration value="Hour"/>
+			<xs:enumeration value="Minute"/>
+			<xs:enumeration value="Second"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.DatePart">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="U">
+				<xs:annotation>
+					<xs:documentation>Unknown Date</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Y">
+				<xs:annotation>
+					<xs:documentation>Year e.g. to indicate 1999 write:
+						1999-01-01T00:00:00</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="YM">
+				<xs:annotation>
+					<xs:documentation>Year and month e.g. to indicate May, 1999 write:
+						1999-05-01T00:00:00</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="YMD">
+				<xs:annotation>
+					<xs:documentation>Year, month and day e.g. to indicate May the
+						31st, 1999 write: 1999-05-31T00:00:00</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="YMDT">
+				<xs:annotation>
+					<xs:documentation>Year, month, day and time e.g. to indicate 1:20
+						pm on May the 31st, 1999 write: 1999-05-31T13:20:00
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.CodeSystem">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="HGL">
+				<xs:annotation>
+					<xs:documentation>HGL - Codes maintained by Healthcare Gateway</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="READ2">
+				<xs:annotation>
+					<xs:documentation>READ2 - Read Codes Version 2</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="READ4">
+				<xs:annotation>
+					<xs:documentation>READ4 - Read Codes Four Byte Set
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SNOMEDCT">
+				<xs:annotation>
+					<xs:documentation>SnomedCT - UK Edition of SNOMED Clinical Terms
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DM+D">
+				<xs:annotation>
+					<xs:documentation>The dm+d dictionary containing medicines and
+						medical devices</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EMISCODE">
+				<xs:annotation>
+					<xs:documentation>Clinical terminology owned by EMIS
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MULTILEX">
+				<xs:annotation>
+					<xs:documentation>Multilex Drug Codes</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.NameUse">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Usual">
+				<xs:annotation>
+					<xs:documentation>Usual (Current)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Previous"/>
+			<xs:enumeration value="Birth"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.Gender">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Unknown"/>
+			<xs:enumeration value="Male"/>
+			<xs:enumeration value="Female"/>
+			<xs:enumeration value="Indeterminate"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.AddressUse">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Home"/>
+			<xs:enumeration value="Work"/>
+			<xs:enumeration value="Temporary"/>
+			<xs:enumeration value="Carer"/>
+			<xs:enumeration value="School"/>
+			<xs:enumeration value="LivedAt"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.UserIdentifier">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="GP">
+				<xs:annotation>
+					<xs:documentation>GMC Number</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="NAT">
+				<xs:annotation>
+					<xs:documentation>Doctor Index Number</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PRES">
+				<xs:annotation>
+					<xs:documentation>GMP PPD Code</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="UKCC">
+				<xs:annotation>
+					<xs:documentation>NMC Code (formerly UKCC)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="RSBP">
+				<xs:annotation>
+					<xs:documentation>RPSGP Code</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="GDC">
+				<xs:annotation>
+					<xs:documentation>GDC Number</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="REG">
+				<xs:annotation>
+					<xs:documentation>Registration Number</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.EventType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="OBS">
+				<xs:annotation>
+					<xs:documentation>Observation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MED">
+				<xs:annotation>
+					<xs:documentation>Medication</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TR">
+				<xs:annotation>
+					<xs:documentation>Test Request</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="INV">
+				<xs:annotation>
+					<xs:documentation>Investigation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="VAL">
+				<xs:annotation>
+					<xs:documentation>Value</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ISS">
+				<xs:annotation>
+					<xs:documentation>Medication Issue</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ATT">
+				<xs:annotation>
+					<xs:documentation>Attachment</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="REF">
+				<xs:annotation>
+					<xs:documentation>Referral</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DRY">
+				<xs:annotation>
+					<xs:documentation>Diary</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ALT">
+				<xs:annotation>
+					<xs:documentation>Alert</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ALL">
+				<xs:annotation>
+					<xs:documentation>Allergy</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="FH">
+				<xs:annotation>
+					<xs:documentation>Family history</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="IMM">
+				<xs:annotation>
+					<xs:documentation>Immunisation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PR">
+				<xs:annotation>
+					<xs:documentation>Problem Rating</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="REP">
+				<xs:annotation>
+					<xs:documentation>Report</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.AssociatedText">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="ReportComment"/>
+			<xs:enumeration value="FilingComment"/>
+			<xs:enumeration value="PreText">
+				<xs:annotation>
+					<xs:documentation>Pre clinical code term text</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PostText">
+				<xs:annotation>
+					<xs:documentation>Post clinical code term text</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Heading"/>
+			<xs:enumeration value="UserComment"/>
+			<xs:enumeration value="DrugInformation"/>
+			<xs:enumeration value="ClinicalInformation"/>
+			<xs:enumeration value="ProblemText"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.RangeQualifier">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Unqualified"/>
+			<xs:enumeration value="Therapeutic">
+				<xs:annotation>
+					<xs:documentation>Therapeutic Interval</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Toxic">
+				<xs:annotation>
+					<xs:documentation>Toxic Interval</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Recommended">
+				<xs:annotation>
+					<xs:documentation>Recommended Interval</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.AgeUnit">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Year"/>
+			<xs:enumeration value="Month"/>
+			<xs:enumeration value="Week"/>
+			<xs:enumeration value="Day"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.Episodicity">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Review"/>
+			<xs:enumeration value="FlareUp"/>
+			<xs:enumeration value="Ended"/>
+			<xs:enumeration value="Changed"/>
+			<xs:enumeration value="Evolved"/>
+			<xs:enumeration value="Outcome">
+				<xs:annotation>
+					<xs:documentation>Problem Outcome</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ReferralUrgency">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Low"/>
+			<xs:enumeration value="Medium"/>
+			<xs:enumeration value="High"/>
+			<xs:enumeration value="Dated"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ReferralTransport">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="NoneRequired"/>
+			<xs:enumeration value="Required"/>
+			<xs:enumeration value="Stretcher"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ReferralDirection">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Inbound"/>
+			<xs:enumeration value="Outbound"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ReferralMode">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Electronic"/>
+			<xs:enumeration value="Telephone"/>
+			<xs:enumeration value="Verbal"/>
+			<xs:enumeration value="Written"/>
+			<xs:enumeration value="Mediated"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ReferralRequestType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Investigation"/>
+			<xs:enumeration value="Treatment"/>
+			<xs:enumeration value="ManagementAdvice"/>
+			<xs:enumeration value="Procedure">
+				<xs:annotation>
+					<xs:documentation>Performance of a Procedure or Operation
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PatientReassurance"/>
+			<xs:enumeration value="Unknown"/>
+			<xs:enumeration value="SelfReferral"/>
+			<xs:enumeration value="Outpatient"/>
+			<xs:enumeration value="Admission"/>
+			<xs:enumeration value="DayCare"/>
+			<xs:enumeration value="CommunityCare"/>
+			<xs:enumeration value="DomiciliaryVisit"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ReferralStatus">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Active"/>
+			<xs:enumeration value="Dormant"/>
+			<xs:enumeration value="Rejected"/>
+			<xs:enumeration value="Ended"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.PrescriptionType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Acute"/>
+			<xs:enumeration value="Repeat"/>
+			<xs:enumeration value="Repeat Dispensed"/>
+			<xs:enumeration value="Automatic"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.DrugStatus">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Active"/>
+			<xs:enumeration value="Cancelled"/>
+			<xs:enumeration value="NeverActive"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.DrugIssueType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Print"/>
+			<xs:enumeration value="IssueWithoutScript"/>
+			<xs:enumeration value="Handwitten"/>
+			<xs:enumeration value="Outside"/>
+			<xs:enumeration value="Dispensing"/>
+			<xs:enumeration value="RepeatDispensing"/>
+			<xs:enumeration value="Store"/>
+			<xs:enumeration value="Automatic"/>
+			<xs:enumeration value="Electronic"/>
+			<xs:enumeration value="OverTheCounter"/>
+			<xs:enumeration value="OutOfHours">
+				<xs:annotation>
+					<xs:documentation>Outside Out of Hours</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Hospital">
+				<xs:annotation>
+					<xs:documentation>Outside Hospital</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.PathReportDataType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Pathology"/>
+			<xs:enumeration value="Radiology"/>
+			<xs:enumeration value="Discharge"/>
+			<xs:enumeration value="Outpatient"/>
+			<xs:enumeration value="OutOfHours"/>
+			<xs:enumeration value="Triage"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.PathMessageType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="ASTM"/>
+			<xs:enumeration value="MEDRPT"/>
+			<xs:enumeration value="NHS002"/>
+			<xs:enumeration value="NHS003"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.OrderPriority">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="High"/>
+			<xs:enumeration value="Medium"/>
+			<xs:enumeration value="Low"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ProblemStatus">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Active"/>
+			<xs:enumeration value="Inactive"/>
+			<xs:enumeration value="HealthPromotion"/>
+			<xs:enumeration value="Potential">
+				<xs:annotation>
+					<xs:documentation>Potential Problem</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ProblemSignificance">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Significant"/>
+			<xs:enumeration value="Minor">
+				<xs:annotation>
+					<xs:documentation>Not Significant</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ProblemRelationship">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Combine"/>
+			<xs:enumeration value="Group"/>
+			<xs:enumeration value="Replace"/>
+			<xs:enumeration value="Evolve"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.Telecom">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="HomePhone"/>
+			<xs:enumeration value="WorkPhone"/>
+			<xs:enumeration value="MobilePhone"/>
+			<xs:enumeration value="Fax"/>
+			<xs:enumeration value="Email"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.ContentSpecification">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Summary"/>
+			<xs:enumeration value="Problems"/>
+			<xs:enumeration value="Diagnosis"/>
+			<xs:enumeration value="Medications"/>
+			<xs:enumeration value="RisksWarnings"/>
+			<xs:enumeration value="Procedures"/>
+			<xs:enumeration value="Investigations"/>
+			<xs:enumeration value="Examinations"/>
+			<xs:enumeration value="Events"/>
+			<xs:enumeration value="PatientDetails"/>
+			<xs:enumeration value="HealthStatusGuide"/>
+			<xs:enumeration value="CumbriaSummary"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.SortOrder">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Ascending"/>
+			<xs:enumeration value="Descending"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.FileFormat">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="PDF"/>
+			<xs:enumeration value="DOC"/>
+			<xs:enumeration value="RTF"/>
+			<xs:enumeration value="TXT"/>
+			<xs:enumeration value="XML"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.Encoding">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Text"/>
+			<xs:enumeration value="Base64"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.Compression">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Deflate"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.PatientIdentifier">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="NHS"/>
+			<xs:enumeration value="CHI"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.Acknowledgement">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Network"/>
+			<xs:enumeration value="Application"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="voc.AcknowledgementStatus">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Postive"/>
+			<xs:enumeration value="Negative"/>
+		</xs:restriction>
+	</xs:simpleType>
+		<xs:simpleType name="voc.SubscriptionActionType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Activate"/>
+			<xs:enumeration value="Report"/>
+			<xs:enumeration value="Suspend"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+		<xs:simpleType name="voc.SubscriptionStatusType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Active"/>
+			<xs:enumeration value="Suspended"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+</xs:schema>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:iops="urn:GB-en-NHS:iops" targetNamespace="urn:GB-en-NHS:iops" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="ProfileConfig" type="iops:ProfileConfigType"/>
+	<xs:complexType name="ProfileConfigType">
+		<xs:sequence>
+			<xs:element name="profileId" type="iops:II"/>
+			<xs:element name="messageType" type="iops:CV"/>
+			<xs:element name="configGroup" type="iops:ConfigGroupType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ConfigGroupType">
+		<xs:choice>
+			<xs:element name="configItem" maxOccurs="unbounded"/>
+		</xs:choice>
+		<xs:attribute name="type" type="iops:CS" use="required"/>
+	</xs:complexType>
+	<!--Data types-->
+	<xs:complexType name="CV">
+		<xs:attribute name="code" type="iops:CS"/>
+		<xs:attribute name="codeSystem" type="iops:uid"/>
+		<xs:attribute name="displayName" type="iops:st"/>
+		<xs:attribute name="codeSystemName" type="iops:st"/>
+		<xs:attribute name="codeSystemVersion" type="iops:st"/>
+	</xs:complexType>
+	<xs:simpleType name="CS">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="[^\s]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="II">
+		<xs:attribute name="root" type="iops:uid"/>
+		<xs:attribute name="extension" type="iops:st"/>
+	</xs:complexType>
+	<xs:simpleType name="uid">
+		<xs:union memberTypes="iops:oid iops:uuid iops:ruid"/>
+	</xs:simpleType>
+	<xs:simpleType name="oid">
+		<xs:annotation>
+			<xs:documentation/>
+			<xs:appinfo/>
+		</xs:annotation>
+		<xs:restriction base="iops:st">
+			<xs:pattern value="([0-9][0-9]*)(\.[0-9][0-9]*)*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="uuid">
+		<xs:annotation>
+			<xs:documentation/>
+			<xs:appinfo/>
+		</xs:annotation>
+		<xs:restriction base="iops:st">
+			<xs:pattern value="[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ruid">
+		<xs:annotation>
+			<xs:documentation/>
+			<xs:appinfo/>
+		</xs:annotation>
+		<xs:restriction base="iops:st">
+			<xs:pattern value="[A-Za-z][A-Za-z0-9\-]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="st">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="ANY" abstract="true"/>
+	<xs:complexType name="ANY.CoreSchemas">
+		<xs:complexContent>
+			<xs:extension base="iops:ANY">
+				<xs:attribute name="schemaName" type="iops:st"/>
+				<xs:attribute name="version" type="xs:double"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ANY.TemplateConstraints">
+		<xs:complexContent>
+			<xs:extension base="iops:ANY">
+				<xs:attribute name="name" type="iops:st"/>
+				<xs:attribute name="version" type="xs:double"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

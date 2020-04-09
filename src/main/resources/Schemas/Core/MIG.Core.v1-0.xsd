@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 sp1 (x64) (http://www.altova.com) by Stuart Dunning (Healthcare Gateway Ltd) -->
+<!-- Copyright 2010 Healthcare Gateway All Rights Reserved. No part of this 
+	document may be photocopied, reproduced, stored in a retrieval system or 
+	transmitted in any form or by any means, whether electronic, mechanical, 
+	or otherwise, without the prior written permission of Healthcare Gateway. 
+	No warranty of accuracy is given concerning the contents of the information 
+	contained in this publication. To the extent permitted by law, no liability 
+	(including liability to any person by reason of negligence) will be accepted 
+	by Healthcare Gateway, its subsidiaries or employees for any direct or indirect 
+	loss or damage caused by omissions from or inaccuracies in this document. 
+	Healthcare Gateway reserves the right to change without notice the contents 
+	of this publication and the software to which it relates. Product and company 
+	names herein may be the trademarks of their respective owners. Healthcare 
+	Gateway Ltd. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.healthcaregateway.co.uk/mig" targetNamespace="http://www.healthcaregateway.co.uk/mig" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:include schemaLocation="../Vocabulary/MIG.Vocabulary.xsd"/>
+	<xs:include schemaLocation="../DataTypes/MIG.DataTypes.xsd"/>
+	<xs:complexType name="Core.Address" mixed="true">
+		<xs:choice>
+			<xs:element name="structuredAddress">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="postCode" type="dt.PostCode"/>
+						<xs:element name="houseNameFlatNumber" type="xs:string" minOccurs="0"/>
+						<xs:element name="street" type="xs:string" minOccurs="0"/>
+						<xs:element name="village" type="xs:string" minOccurs="0"/>
+						<xs:element name="town" type="xs:string" minOccurs="0"/>
+						<xs:element name="county" type="xs:string" minOccurs="0"/>
+						<xs:element name="validPeriod" type="dt.TimeRange" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="unstructuredAddress">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="postCode" type="dt.PostCode" minOccurs="0"/>
+						<xs:element name="line1" type="xs:string" minOccurs="0"/>
+						<xs:element name="line2" type="xs:string" minOccurs="0"/>
+						<xs:element name="line3" type="xs:string" minOccurs="0"/>
+						<xs:element name="line4" type="xs:string" minOccurs="0"/>
+						<xs:element name="line5" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="use" type="voc.AddressUse"/>
+		<xs:attribute name="type" type="voc.AddressType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="Core.ContentSpecification">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid"/>
+			<xs:element name="contentType" type="voc.ContentSpecification"/>
+			<xs:element name="effectiveTime" type="dt.TimeRange" minOccurs="0"/>
+			<xs:element name="totalRecords" type="xs:positiveInteger" minOccurs="0"/>
+			<xs:element name="sortOrder" type="voc.SortOrder" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.DataContent" mixed="true">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="encoding" type="voc.Encoding" use="required"/>
+		<xs:attribute name="compression" type="voc.Compression" use="optional">
+			<xs:annotation>
+				<xs:documentation>Indicates that the data is compressed, and the
+compression algorithm used.
+				</xs:documentation>
+				<xs:appinfo/>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="contentType">
+			<xs:annotation>
+				<xs:documentation>indicates the type of data</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Core.Document">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="description" type="xs:string"/>
+			<xs:element name="effectiveTime" type="dt.DatePart"/>
+			<xs:element name="documentType" type="dt.Code" minOccurs="0"/>
+			<xs:element name="mimeType" type="dt.mimeType"/>
+			<xs:element name="content" type="Core.DataContent"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.GenericDocument">
+		<xs:sequence>
+			<xs:element name="documentId" type="dt.uid"/>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="description" type="xs:string"/>
+			<xs:element name="effectiveTime" type="dt.DatePart"/>
+			<xs:element name="documentType" type="dt.openCode" minOccurs="1"/>
+			<xs:element name="mimeType" type="dt.mimeType"/>
+			<xs:element name="content" type="Core.DataContent"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Location">
+		<xs:choice>
+			<xs:element name="location">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="id" type="dt.uid"/>
+						<xs:element name="name" type="xs:string"/>
+						<xs:element name="locationType" type="dt.Code" minOccurs="0"/>
+						<xs:element name="address" type="Core.Address" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="telecom" type="Core.Telecom" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="locationRef">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="id" type="dt.uid"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="Core.Organisation">
+		<xs:choice>
+			<xs:element name="organisation">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="id" type="dt.uid"/>
+						<xs:element name="name" type="xs:string"/>
+						<xs:element name="organisationType" type="dt.Code" minOccurs="0"/>
+						<xs:element name="speciality" type="dt.Code" minOccurs="0"/>
+						<xs:element name="nationalPracticeCode" type="xs:string"/>
+						<xs:element name="primaryLocation" type="Core.Location" minOccurs="0"/>
+						<xs:element name="location" type="Core.Location" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="organisationRef">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="id" type="dt.uid"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="Core.PatientOrganisation">
+		<xs:choice>
+			<xs:element name="organisation">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="id" type="dt.uid"/>
+						<xs:element name="name" type="xs:string"/>
+						<xs:element name="organisationType" type="dt.Code" minOccurs="0"/>
+						<xs:element name="specialities" type="dt.Speciality" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="organisationCode" type="xs:string"/>
+						<xs:element name="primaryLocation" type="Core.Location" minOccurs="0"/>
+						<xs:element name="location" type="Core.Location" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="organisationRef">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="id" type="dt.uid"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:simpleType name="Core.OrganisationSDS">
+		<xs:restriction base="dt.uid"/>
+	</xs:simpleType>
+	<xs:complexType name="Core.Pagination">
+		<xs:sequence>
+			<xs:element name="pageIndex" type="xs:positiveInteger"/>
+			<xs:element name="pageSize" type="xs:positiveInteger"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.PaginationResponse">
+		<xs:complexContent>
+			<xs:extension base="Core.Pagination">
+				<xs:sequence>
+					<xs:element name="totalItemCount" type="xs:nonNegativeInteger"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Core.Patient">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid"/>
+			<xs:element name="primaryIdentifier" type="Core.PatientIdentifier"/>
+			<xs:element name="person" type="Core.Person"/>
+			<xs:element name="birthDate" type="dt.Date"/>
+			<xs:element name="deceasedDate" type="dt.DatePart" minOccurs="0"/>
+			<xs:element name="address" type="Core.Address" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="telecom" type="Core.Telecom" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="usualGP" type="Core.UserRole" minOccurs="0"/>
+			<xs:element name="GPPractice" type="Core.Organisation"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.PatientRecord">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid"/>
+			<xs:element name="primaryIdentifier" type="Core.PatientIdentifier"/>
+			<xs:element name="person" type="Core.Person"/>
+			<xs:element name="birthDate" type="dt.Date"/>
+			<xs:element name="deceasedDate" type="dt.DatePart" minOccurs="0"/>
+			<xs:element name="address" type="Core.Address" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="telecom" type="Core.Telecom" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="careProfessional" type="Core.UserRole" minOccurs="0"/>
+			<xs:element name="Organisation" type="Core.PatientOrganisation"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Person">
+		<xs:sequence>
+			<xs:element name="name" type="Core.PersonName" maxOccurs="unbounded"/>
+			<xs:element name="gender" type="Core.PersonGender"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="Core.PersonGender">
+		<xs:restriction base="voc.Gender"/>
+	</xs:simpleType>
+	<xs:complexType name="Core.PersonName" mixed="false">
+		<xs:sequence>
+			<xs:element name="title" type="xs:string" minOccurs="0"/>
+			<xs:element name="familyName" type="xs:string" minOccurs="0"/>
+			<xs:element name="givenName" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="preferredName" type="xs:string" minOccurs="0"/>
+			<xs:element name="suffix" type="xs:string" minOccurs="0"/>
+			<xs:element name="validPeriod" type="dt.TimeRange" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="use" type="voc.NameUse" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="Core.PersonSDS">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid"/>
+			<xs:element name="roleProfile" type="dt.uid"/>
+			<xs:element name="role" type="dt.uid"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Provenance">
+		<xs:sequence>
+			<xs:element name="creationTime" type="dt.DateTime">
+				<xs:annotation>
+					<xs:documentation>Date and time of message generation on
+						originating system</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="system" type="Core.ProvenanceSystem"/>
+			<xs:element name="organisation" type="Core.ProvenanceOrganisation" minOccurs="0"/>
+			<xs:element name="user" type="Core.ProvenanceUser" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.ProvenanceOrganisation">
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="id" type="dt.uid"/>
+				<xs:element name="organisationSDS" type="Core.OrganisationSDS">
+					<xs:annotation>
+						<xs:documentation>A valid SDS identifier that uniquely identifies
+							the Organisation</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="nationalCode" type="dt.id">
+					<xs:annotation>
+						<xs:documentation>Example: NACS code</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="name" type="xs:string" minOccurs="0"/>
+			<xs:element name="departmentName" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.ProvenanceSystem">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid"/>
+			<xs:element name="name" type="xs:string" minOccurs="0"/>
+			<xs:element name="version" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.ProvenanceUser">
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="id" type="dt.uid"/>
+				<xs:element name="personSDS" type="Core.PersonSDS"/>
+				<xs:element name="userCode">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="dt.id">
+								<xs:attribute name="use" type="voc.UserIdentifier" use="required"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="name" type="Core.PersonName" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.ServiceDefinition">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="version" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Telecom">
+		<xs:sequence>
+			<xs:element name="value" type="xs:string"/>
+			<xs:element name="validPeriod" type="dt.TimeRange" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="use" type="voc.Telecom" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="Core.User">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid"/>
+			<xs:element name="person" type="Core.Person"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.UserRole">
+		<xs:choice>
+			<xs:element name="userRole">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="id" type="dt.uid"/>
+						<xs:element name="nationalCode" minOccurs="0">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="dt.id">
+										<xs:attribute name="use" type="voc.UserIdentifier" use="required"/>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="roleName" type="xs:string"/>
+						<xs:element name="user" type="Core.User"/>
+						<xs:element name="telecom" type="Core.Telecom" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="organisation" type="Core.Organisation"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="userRoleRef">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="id" type="dt.uid"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="Core.PatientIdentifier">
+		<xs:simpleContent>
+			<xs:extension base="dt.id">
+				<xs:attribute name="type" type="voc.PatientIdentifier" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="Core.DataFilters">
+		<xs:choice>
+			<xs:element name="dateRange" type="dt.DurationRange"/>
+			<xs:element name="totalNumberOfRecords" type="dt.TopNFilter"/>
+			<xs:element name="numberOfRecords" type="dt.TopNFilter"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="Core.RequestSpecification">
+		<xs:sequence>
+			<xs:element name="id" type="dt.uid"/>
+			<xs:element name="responseFormat" type="xs:string"/>
+			<xs:element name="request" type="Core.Request" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Request">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="filters" type="Core.DataFilters" minOccurs="0"/>
+			<xs:element name="includeAssociatedText" type="dt.bool"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Core.Subscription">
+		<xs:sequence>
+			<xs:element name="subscriptionID" type="xs:string"/>
+			<xs:element name="Action" type="voc.SubscriptionActionType"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

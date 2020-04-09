@@ -1,0 +1,11 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.healthcaregateway.co.uk/mig">
+    <xs:include schemaLocation="../Headers/MIG.HD.Source.v1-0.xsd" />
+    <xs:include schemaLocation="../Headers/MIG.HD.Target.v1-0.xsd" />
+     <xs:include schemaLocation="../Payloads/MIG.PL.PatientTraceService.ExtendedTraceResponse.v1-0.xsd" />
+     <xs:include schemaLocation="../Payloads/MIG.PL.PatientTraceService.PatientTrace.v1-0.xsd"/>
+      <xs:include schemaLocation="../Webservice/MIG.Standard.Fault.v1-0.xsd" />
+      <xs:include schemaLocation="../Webservice/MIG.Standard.Request.v1-0.xsd" />
+      <xs:include schemaLocation="../Webservice/MIG.Standard.Response.v1-0.xsd" />
+      <xs:include schemaLocation="../Payloads/MIG.PL.DataExtractionService.EhrExtractRequest.v2-0.xsd"/>
+      <xs:include schemaLocation="../Payloads/MIG.PL.DataExtractionService.EhrExtractResponse.v2-0.xsd"/>
+</xs:schema>

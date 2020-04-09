@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+*****************************************************************************************************************
+* 
+* 	Copyright (c) 2010 NHS Conneccting For Health. All rights reserved.
+*   
+*  	Redistribution and use in source and binary forms, with or without
+*  	modification, are permitted provided that the following conditions
+*  	are met:
+*  		1. Redistributions of source code must retain the above copyright
+*     		notice, this list of conditions and the following disclaimer.
+*  		2. Redistributions in binary form must reproduce the above copyright
+*     		notice, this list of conditions and the following disclaimer in the
+*     		documentation and/or other materials provided with the distribution.
+*  		3. All advertising materials mentioning features or use of this software
+*     		must display the following acknowledgement:
+*       This product includes software developed by Health Level Seven.
+*  	THIS SOFTWARE IS PROVIDED BY NHS Conneccting For Health. AND CONTRIBUTORS "AS IS" AND
+*  	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+*  	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+*  	ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+*  	FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+*  	DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+*  	OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+*  	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*  	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+*  	OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+*  	SUCH DAMAGE.
+*
+* CHANGE HISTORY:
+*
+* VERSION   DATE       AUTHOR                   LABEL   DESCRIPTION
+* =======   ========== ======================   ======  ===========================================================
+* 1.0       31-03-2010 Cord Oestmann                    Created this WSDL
+* 2.0       16-05-2010 Interoperability Team            Amended this WSDL to make changes to the namespace declarations and the action and callbacks.
+*
+********************************************************************************************************************
+-->
+<!-- Service to manage message collection from the Interoperability Toolkit -->
+<wsdl:definitions name="ITKQueueCollection" 
+       targetNamespace="urn:nhs-itk:ns:201005" 
+            xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+            xmlns:itk="urn:nhs-itk:ns:201005"
+            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                         >
+	<wsdl:types>
+		<xsd:schema targetNamespace="urn:nhs-itk:ns:201005" 
+		            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                    <xsd:include schemaLocation="schemas/QueueCollectionMessageTypes-2010-05.xsd" />
+                    <!-- include common ITK element definitions -->
+                    <xsd:include schemaLocation="schemas/ITKMessageTypes-2010-05.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="GetQueueMessagesRequest">
+		<wsdl:part name="GetQueueMessagesRequest" element="itk:QueueMessage" />
+	</wsdl:message>
+	<wsdl:message name="GetQueueMessagesResponse">
+		<wsdl:part name="GetQueueMessagesResponse" element="itk:QueueMessageResponse" />
+	</wsdl:message>
+	<wsdl:message name="ConfirmMessageReceiptRequest">
+		<wsdl:part name="ConfirmMessageReceiptRequest" element="itk:QueueConfirmMessageReceipt" />
+	</wsdl:message>
+	<wsdl:message name="acknowledgementResponse">
+		<wsdl:part name="acknowledgementResponse" element="itk:SimpleMessageResponse" />
+	</wsdl:message>
+	<wsdl:message name="faultResponse">
+		<wsdl:part name="faultResponse" element="itk:ToolkitErrorInfo" />
+	</wsdl:message>
+	<wsdl:portType name="GetMessages_ptt">
+		<wsdl:operation name="GetMessages-v1-0">
+			<wsdl:input message="itk:GetQueueMessagesRequest" />
+                        <wsdl:output message="itk:GetQueueMessagesResponse"/>
+                        <wsdl:fault message="itk:faultResponse" name="standardFault"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:portType name="ConfirmMessageReceipt_ptt">
+		<wsdl:operation name="ConfirmMessageReceipt-v1-0">
+			<wsdl:input message="itk:ConfirmMessageReceiptRequest" />
+                        <wsdl:output message="itk:acknowledgementResponse"/>
+                        <wsdl:fault message="itk:faultResponse" name="standardFault"/>
+		</wsdl:operation>
+	</wsdl:portType>
+    <wsdl:binding name="GetMessages_pttBinding" type="itk:GetMessages_ptt">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetMessages-v1-0">
+            <soap:operation style="document"
+                            soapAction="urn:nhs-itk:services:201005:GetMessages-v1-0"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="GetQueueMessagesRequest"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="GetQueueMessagesResponse"/>
+            </wsdl:output>
+            <wsdl:fault name="standardFault">
+                <soap:fault use="literal" name="standardFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ConfirmMessageReceipt_pttBinding" type="itk:ConfirmMessageReceipt_ptt">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="ConfirmMessageReceipt-v1-0">
+            <soap:operation style="document"
+                            soapAction="urn:nhs-itk:services:201005:ConfirmMessageReceipt-v1-0"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="ConfirmMessageReceiptRequest"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="acknowledgementResponse"/>
+            </wsdl:output>
+            <wsdl:fault name="standardFault">
+                <soap:fault use="literal" name="standardFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="GetMessages-v1-0">
+      <wsdl:documentation>This service allows an endpoint system to retrieve messages destined for it
+                          from the ITK. It requires the calling system to confirm receipt of the message.
+                          It returns an array of messages. If no messages exist for the system/message type
+                          in question no array will be returned. The message count attribute indicates the
+                          number of messages being returned.</wsdl:documentation>
+        <wsdl:port name="GetMessages_pttPort"
+                   binding="itk:GetMessages_pttBinding">
+            <soap:address location="http://server:80/interoperability.toolkit/ToolkitUtilities/GetMessages-v1-0"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="ConfirmMessageReceipt-v1-0">
+      <wsdl:documentation>This service is called from a system, which has collected messages from the ITK.
+                          It indicates the success in taking ownership of the messages in question. It
+                          passes an array of messages handles. The message count attribute indicates the
+                          number of message handles being returned.</wsdl:documentation>
+        <wsdl:port name="ConfirmMessageReceipt_pttPort"
+                   binding="itk:ConfirmMessageReceipt_pttBinding">
+            <soap:address location="http://server:80/interoperability.toolkit/ToolkitUtilities/ConfirmMessageReceipt-v1-0"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
